@@ -1,0 +1,203 @@
+############################
+# Global / OS
+############################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+ehthumbs.db
+desktop.ini
+*.stackdump
+
+############################
+# Logs / Temp
+############################
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.old
+flutter_*.log
+
+############################
+# Dart / Flutter
+############################
+.dart_tool/
+.packages
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+coverage/
+build/
+.flutter-versions/
+.dart_tool/package_config.json
+
+############################
+# Flutter generated
+############################
+**/generated_plugin_registrant.dart
+**/flutter_export_environment.sh
+
+############################
+# IDE - IntelliJ / Android Studio
+############################
+.idea/
+*.iml
+*.ipr
+*.iws
+/out/
+android/.idea/
+
+############################
+# IDE - VS Code
+############################
+.vscode/
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+############################
+# Android
+############################
+android/.gradle/
+android/local.properties
+android/**/build/
+android/app/debug/
+android/app/profile/
+android/app/release/
+android/app/*.keystore
+android/key.properties
+android/app/google-services.json
+
+############################
+# Gradle
+############################
+.gradle/
+gradle-app.setting
+!gradle-wrapper.jar
+
+############################
+# iOS
+############################
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/.last_build_id
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/App.framework
+ios/Flutter/App.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/GeneratedPluginRegistrant.*
+ios/Runner/GeneratedPluginRegistrant.*
+
+############################
+# Xcode
+############################
+*.xcworkspace
+*.xcuserdata
+*.xcuserstate
+DerivedData/
+ios/build/
+build/ios/
+*.moved-aside
+*.pbxuser
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+
+############################
+# CocoaPods
+############################
+Podfile.lock
+
+############################
+# macOS
+############################
+macos/Flutter/ephemeral/
+macos/Pods/
+macos/build/
+macos/.symlinks/
+
+############################
+# Windows
+############################
+windows/flutter/ephemeral/
+windows/build/
+windows/.vs/
+windows/*.sln
+windows/*.vcxproj*
+windows/*.pdb
+
+############################
+# Linux
+############################
+linux/flutter/ephemeral/
+linux/build/
+
+############################
+# Web
+############################
+web/.dart_tool/
+web/build/
+web/.firebase/
+web/firebase-debug.log
+
+############################
+# Firebase
+############################
+.firebase/
+.firebaserc
+firebase.json
+firebase-debug.log
+
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+*.pem
+*.key
+*.crt
+secrets.json
+config.json
+
+############################
+# Fastlane
+############################
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/
+fastlane/test_output/
+
+############################
+# Crashlytics
+############################
+crashlytics-build.properties
+
+############################
+# Symbolication / Obfuscation
+############################
+app.*.symbols
+app.*.map.json
+
+############################
+# CI / CD
+############################
+coverage/
+lcov.info
+test-results/
+reports/
+
+############################
+# Backup / Migration
+############################
+migrate_working_dir/
+.backup/
+.backups/
