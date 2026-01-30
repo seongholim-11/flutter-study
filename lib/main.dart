@@ -1,28 +1,60 @@
+import 'package:flutter/material.dart';
+
 void main() {
-  // 1단계 과제 코드를 여기에 작성하세요.
-  final myName = '임성호';
-  const myFavoriteNumber = 3;
-  var now = DateTime.now();
+  runApp(const MyApp());
+}
 
-  final myFavoriteFruits = ['apple', 'strawberry', 'banana'];
-  Map<String, dynamic> myProfile = {
-    'name': myName,
-    'favoriteNumber': myFavoriteNumber,
-    'favoriteFruits': myFavoriteFruits[1],
-  };
+/// 앱의 최상위 위젯
+class MyApp extends StatelessWidget {
+  const MyApp({super.key}); // const 생성자
 
-  String? nullableString;
-  nullableString = 'Hello, Dart!';
+  @override
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: const CounterPage(),
+    );
+  }
+}
 
-  String multiply(int a, int b) {
-    return '결과는 ${a * b}입니다.';
+/// 카운터 화면 (StatefulWidget)
+class CounterPage extends StatefulWidget {
+  const CounterPage({super.key}); // const 생성자
+
+  @override
+  State<CounterPage> createState() => _CounterPageState();
+}
+
+class _CounterPageState extends State<CounterPage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
   }
 
-  print(multiply(myFavoriteNumber, 10));
-  print('My Name: $myName');
-  print('Favorite Number: $myFavoriteNumber');
-  print('Now: $now');
-  print('Favorite Fruits: $myFavoriteFruits');
-  print('My Profile: $myProfile');
-  print('Nullable String: $nullableString');
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('2단계: 위젯의 이해'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '$_counter',
+              style: const TextStyle(fontSize: 40),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _incrementCounter,
+              child: const Text('증가'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
