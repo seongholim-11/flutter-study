@@ -9,9 +9,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: CounterPage(),
-    );
+    return const MaterialApp(home: CounterPage());
   }
 }
 
@@ -43,10 +41,36 @@ class _CounterPageState extends State<CounterPage> {
     });
   }
 
+  // 메인 화면(MainScreen)에서 데이터를 기다리고 받는 코드
+  void _navigateToDetail() async {
+    final result = await Navigator.push(
+      // await로 결과 대기
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetailPage(currentCount: _counter),
+      ),
+    );
+
+    if (result != null) {
+      // result 변수에는 "작업 완료!"라는 문자열이 담기게 됨
+      setState(() {
+        _counter = result;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('3단계: 레이아웃')),
+      appBar: AppBar(
+        title: const Text('3단계: 레이아웃'),
+        actions: [
+          IconButton(
+            onPressed: _navigateToDetail,
+            icon: const Icon(Icons.info_outline),
+          ),
+        ],
+      ),
       body: Column(
         children: [
           Expanded(
@@ -77,6 +101,37 @@ class _CounterPageState extends State<CounterPage> {
       floatingActionButton: FloatingActionButton(
         onPressed: _resetCounter,
         child: const Icon(Icons.refresh),
+      ),
+    );
+  }
+}
+
+class DetailPage extends StatelessWidget {
+  final int currentCount;
+  const DetailPage({super.key, required this.currentCount});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("상세 페이지")),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text('현재 카운트: $currentCount'),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, currentCount + 10),
+              child: const Text("+10"),
+            ),
+            const SizedBox(height: 10),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, currentCount - 10),
+              child: const Text("-10"),
+            ),
+          ],
+        ),
       ),
     );
   }
