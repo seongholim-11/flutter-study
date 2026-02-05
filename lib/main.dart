@@ -4,134 +4,41 @@ void main() {
   runApp(const MyApp());
 }
 
+// 2. 앱의 최상위 위젯 (MaterialApp 반환)
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(home: CounterPage());
-  }
-}
-
-class CounterPage extends StatefulWidget {
-  const CounterPage({super.key});
-
-  @override
-  State<CounterPage> createState() => _CounterPageState();
-}
-
-class _CounterPageState extends State<CounterPage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
-
-  void _decrementCounter() {
-    setState(() {
-      _counter--;
-    });
-  }
-
-  void _resetCounter() {
-    setState(() {
-      _counter = 0;
-    });
-  }
-
-  // 메인 화면(MainScreen)에서 데이터를 기다리고 받는 코드
-  void _navigateToDetail() async {
-    final result = await Navigator.push(
-      // await로 결과 대기
-      context,
-      MaterialPageRoute(
-        builder: (context) => DetailPage(currentCount: _counter),
-      ),
-    );
-
-    if (result != null) {
-      // result 변수에는 "작업 완료!"라는 문자열이 담기게 됨
-      setState(() {
-        _counter = result;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('3단계: 레이아웃'),
-        actions: [
-          IconButton(
-            onPressed: _navigateToDetail,
-            icon: const Icon(Icons.info_outline),
-          ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Container(
-              color: Colors.blue,
-              alignment: Alignment.center,
-              child: Text(
-                _counter.toString(),
-                style: const TextStyle(fontSize: 50, color: Colors.white),
-              ),
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              ElevatedButton(
-                onPressed: _incrementCounter,
-                child: const Text("증가"),
-              ),
-              ElevatedButton(
-                onPressed: _decrementCounter,
-                child: const Text("감소"),
-              ),
-            ],
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _resetCounter,
-        child: const Icon(Icons.refresh),
-      ),
+    return const MaterialApp( // <--- 수정 포인트 1: MaterialApp에 const 추가
+      home: ContactListPage(), // <--- 수정 포인트 2: ContactListPage()에 const 추가
     );
   }
 }
 
-class DetailPage extends StatelessWidget {
-  final int currentCount;
-  const DetailPage({super.key, required this.currentCount});
+class ContactListPage extends StatelessWidget {
+  const ContactListPage({super.key}); // <--- 여기도 const 생성자로 변경
 
   @override
   Widget build(BuildContext context) {
+    final List<String> contacts = [
+      '김철수', '이영희', '박민준', '최서연', '정지훈',
+      '강민서', '조현우', '윤지아', '임도윤', '황서윤',
+      '송하준', '오은서', '장시우', '신예은', '한지민'
+    ];
+
     return Scaffold(
-      appBar: AppBar(title: const Text("상세 페이지")),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text('현재 카운트: $currentCount'),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, currentCount + 10),
-              child: const Text("+10"),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, currentCount - 10),
-              child: const Text("-10"),
-            ),
-          ],
-        ),
+      appBar: AppBar(title: const Text('연락처 목록')),
+      body: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (BuildContext ctx, int idx) {
+          return ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(contacts[idx]),
+            subtitle: const Text("전화번호: 010-1234-5678"),
+            trailing: const Icon(Icons.call),
+          );
+        },
       ),
     );
   }
