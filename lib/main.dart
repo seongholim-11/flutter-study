@@ -58,49 +58,76 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(title: const Text('연락처 목록')),
       body: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            // [오류 수정 1] Row의 자식들은 children: [] 리스트 안에 있어야 합니다.
-            child: Row(
-              children: [
-                // [오류 수정 2] TextField는 남는 공간을 모두 차지하도록 Expanded로 감쌉니다.
-                Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    // [요구사항 수정] hintText를 추가합니다.
-                    decoration: const InputDecoration(hintText: "새 연락처 이름"),
-                  ),
-                ),
-                const SizedBox(width: 8), // 입력 필드와 버튼 사이에 간격을 줍니다.
-                ElevatedButton(
-                  onPressed: _addContact,
-                  child: const Text("추가"),
-                ),
-              ],
+          // 1. 입력 위젯 사용 (완벽하게 구현하셨습니다)
+          ContactInput(controller: _controller, onAdd: _addContact),
+          // 2. 리스트 위젯 사용 (완벽하게 구현하셨습니다)
+          ContactListView(contacts: _contacts, onRemove: _removeContact),
+        ],
+      ),
+    );
+  }
+}
+
+// --- 분리된 위젯 1: 연락처 입력 --- 
+class ContactInput extends StatelessWidget {
+  // 부모로부터 받을 데이터와 함수 선언
+  final TextEditingController controller;
+  final VoidCallback onAdd;
+
+  // 생성자를 통해 전달받음
+  const ContactInput({super.key, required this.controller, required this.onAdd});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Row(
+        children: [
+          Expanded(
+            child: TextField(
+              controller: controller, // 전달받은 컨트롤러 사용
+              decoration: const InputDecoration(hintText: "새 연락처 이름"),
             ),
           ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: _contacts.length,
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: const Icon(Icons.person),
-                  title: Text(_contacts[index]),
-                  subtitle: const Text("전화번호: 010-1234-5678"),
-                  // [오류 수정 3] IconButton은 const가 될 수 없으며,
-                  // onPressed는 함수 자체를 전달해야 합니다.
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    // [오류 수정 4] () => _removeContact(index) 형태로 함수를 전달해야 합니다.
-                    onPressed: () {
-                      _removeContact(index);
-                    },
-                  ),
-                );
-              },
-            ),
+          const SizedBox(width: 8),
+          ElevatedButton(
+            onPressed: onAdd, // 전달받은 함수 사용
+            child: const Text("추가"),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// --- 분리된 위젯 2: 연락처 목록 --- 
+class ContactListView extends StatelessWidget {
+  // 부모로부터 받을 데이터와 함수 선언
+  final List<String> contacts;
+  final void Function(int) onRemove; // Function(int) 타입으로 받음
+
+  // 생성자를 통해 전달받음
+  const ContactListView({super.key, required this.contacts, required this.onRemove});
+
+  @override
+  Widget build(BuildContext context) {
+    // [핵심] 리스트는 남는 공간을 모두 차지해야 하므로 Expanded로 감싸야 함
+    return Expanded(
+      child: ListView.builder(
+        itemCount: contacts.length,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            leading: const Icon(Icons.person),
+            title: Text(contacts[index]),
+            subtitle: const Text("전화번호: 010-1234-5678"),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () {
+                onRemove(index); // 전달받은 함수 사용
+              },
+            ),
+          );
+        },
       ),
     );
   }
