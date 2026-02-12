@@ -9,12 +9,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: ContactListPage(),
+    // [요구사항 1] MaterialApp에 테마 적용
+    return MaterialApp(
+      title: '연락처 앱',
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      ),
+      home: const ContactListPage(),
     );
   }
 }
 
+// ... (ContactListPage, _ContactListPageState 코드는 변경 없음) ...
 class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
 
@@ -58,9 +65,7 @@ class _ContactListPageState extends State<ContactListPage> {
       appBar: AppBar(title: const Text('연락처 목록')),
       body: Column(
         children: [
-          // 1. 입력 위젯 사용 (완벽하게 구현하셨습니다)
           ContactInput(controller: _controller, onAdd: _addContact),
-          // 2. 리스트 위젯 사용 (완벽하게 구현하셨습니다)
           ContactListView(contacts: _contacts, onRemove: _removeContact),
         ],
       ),
@@ -68,13 +73,11 @@ class _ContactListPageState extends State<ContactListPage> {
   }
 }
 
-// --- 분리된 위젯 1: 연락처 입력 --- 
+
 class ContactInput extends StatelessWidget {
-  // 부모로부터 받을 데이터와 함수 선언
   final TextEditingController controller;
   final VoidCallback onAdd;
 
-  // 생성자를 통해 전달받음
   const ContactInput({super.key, required this.controller, required this.onAdd});
 
   @override
@@ -85,13 +88,15 @@ class ContactInput extends StatelessWidget {
         children: [
           Expanded(
             child: TextField(
-              controller: controller, // 전달받은 컨트롤러 사용
+              controller: controller,
               decoration: const InputDecoration(hintText: "새 연락처 이름"),
             ),
           ),
           const SizedBox(width: 8),
           ElevatedButton(
-            onPressed: onAdd, // 전달받은 함수 사용
+            onPressed: onAdd,
+            // [수정] Text에 불필요한 스타일 제거
+            // 버튼은 테마로부터 자동으로 스타일을 부여받습니다.
             child: const Text("추가"),
           ),
         ],
@@ -100,18 +105,14 @@ class ContactInput extends StatelessWidget {
   }
 }
 
-// --- 분리된 위젯 2: 연락처 목록 --- 
 class ContactListView extends StatelessWidget {
-  // 부모로부터 받을 데이터와 함수 선언
   final List<String> contacts;
-  final void Function(int) onRemove; // Function(int) 타입으로 받음
+  final void Function(int) onRemove;
 
-  // 생성자를 통해 전달받음
   const ContactListView({super.key, required this.contacts, required this.onRemove});
 
   @override
   Widget build(BuildContext context) {
-    // [핵심] 리스트는 남는 공간을 모두 차지해야 하므로 Expanded로 감싸야 함
     return Expanded(
       child: ListView.builder(
         itemCount: contacts.length,
@@ -123,11 +124,64 @@ class ContactListView extends StatelessWidget {
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
-                onRemove(index); // 전달받은 함수 사용
+                onRemove(index);
               },
             ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ContactDetailPage(
+                    name: contacts[index],
+                    phone: '010-1234-5678',
+                  ),
+                ),
+              );
+            },
           );
         },
+      ),
+    );
+  }
+}
+
+class ContactDetailPage extends StatelessWidget {
+  final String name;
+  final String phone;
+
+  const ContactDetailPage({super.key, required this.name, required this.phone});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('$name 님의 정보')),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // [요구사항 2] 하드코딩된 스타일을 테마 스타일로 변경
+            Icon(
+              Icons.person,
+              size: 100,
+              color: Theme.of(context).colorScheme.primary, // 테마의 기본 색상
+            ),
+            const SizedBox(height: 16),
+            Text(
+              name,
+              style: Theme.of(context).textTheme.headlineMedium, // 테마의 headlineMedium 스타일
+            ),
+            const SizedBox(height: 8),
+            Text(
+              phone,
+              style: Theme.of(context).textTheme.bodyLarge, // 테마의 bodyLarge 스타일
+            ),
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("뒤로가기"),
+            ),
+          ],
+        ),
       ),
     );
   }
