@@ -21,6 +21,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
+class Contact {
+  String name;
+  String phone;
+  bool isFavorite; // 즐겨찾기 여부
+
+  // 생성자
+  Contact({required this.name, required this.phone, this.isFavorite = false});
+}
+
 // ... (ContactListPage, _ContactListPageState 코드는 변경 없음) ...
 class ContactListPage extends StatefulWidget {
   const ContactListPage({super.key});
@@ -30,10 +39,22 @@ class ContactListPage extends StatefulWidget {
 }
 
 class _ContactListPageState extends State<ContactListPage> {
-  final List<String> _contacts = [
-    '김철수', '이영희', '박민준', '최서연', '정지훈',
-    '강민서', '조현우', '윤지아', '임도윤', '황서윤',
-    '송하준', '오은서', '장시우', '신예은', '한지민'
+  final List<Contact> _contacts = [
+    Contact(name: '김철수', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '이영희', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '박민준', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '최서연', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '정지훈', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '강민서', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '조현우', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '윤지아', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '임도윤', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '황서윤', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '송하준', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '오은서', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '장시우', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '신예은', phone: '010-1234-5678', isFavorite: false),
+    Contact(name: '한지민', phone: '010-1234-5678', isFavorite: false),
   ];
 
   final _controller = TextEditingController();
@@ -47,15 +68,44 @@ class _ContactListPageState extends State<ContactListPage> {
   void _addContact() {
     if (_controller.text.isNotEmpty) {
       setState(() {
-        _contacts.add(_controller.text);
+        _contacts.add(Contact(name: _controller.text, phone: '010-0000-0000'));
       });
       _controller.clear();
     }
   }
 
+  void _toggleFavorite(int index) {
+    setState(() {
+      _contacts[index].isFavorite = !_contacts[index].isFavorite;
+    });
+  }
+
   void _removeContact(int index) {
     setState(() {
-      _contacts.removeAt(index);
+      showDialog(
+        context: context, // 현재 위젯의 context
+        builder: (BuildContext dialogContext) {
+          return AlertDialog(
+            title: const Text('삭제 확인'),
+            content: const Text('정말로 삭제하시겠습니까?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext), // 다이얼로그 닫기
+                child: const Text('취소'),
+              ),
+              TextButton(
+                onPressed: () {
+                  // ... 실제 삭제 로직 실행 ...
+
+                  _contacts.removeAt(index);
+                  Navigator.pop(dialogContext); // 다이얼로그 닫기
+                },
+                child: const Text('삭제'),
+              ),
+            ],
+          );
+        },
+      );
     });
   }
 
@@ -66,19 +116,26 @@ class _ContactListPageState extends State<ContactListPage> {
       body: Column(
         children: [
           ContactInput(controller: _controller, onAdd: _addContact),
-          ContactListView(contacts: _contacts, onRemove: _removeContact),
+          ContactListView(
+            contacts: _contacts,
+            onRemove: _removeContact,
+            onToggleFavorite: _toggleFavorite,
+          ),
         ],
       ),
     );
   }
 }
 
-
 class ContactInput extends StatelessWidget {
   final TextEditingController controller;
   final VoidCallback onAdd;
 
-  const ContactInput({super.key, required this.controller, required this.onAdd});
+  const ContactInput({
+    super.key,
+    required this.controller,
+    required this.onAdd,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -106,10 +163,16 @@ class ContactInput extends StatelessWidget {
 }
 
 class ContactListView extends StatelessWidget {
-  final List<String> contacts;
+  final List<Contact> contacts;
   final void Function(int) onRemove;
+  final void Function(int) onToggleFavorite;
 
-  const ContactListView({super.key, required this.contacts, required this.onRemove});
+  const ContactListView({
+    super.key,
+    required this.contacts,
+    required this.onRemove,
+    required this.onToggleFavorite,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -118,9 +181,17 @@ class ContactListView extends StatelessWidget {
         itemCount: contacts.length,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
-            leading: const Icon(Icons.person),
-            title: Text(contacts[index]),
-            subtitle: const Text("전화번호: 010-1234-5678"),
+            leading: IconButton(
+              onPressed: () {
+                onToggleFavorite(index);
+              },
+              color: Colors.amber,
+              icon: contacts[index].isFavorite
+                  ? Icon(Icons.star)
+                  : Icon(Icons.star_border),
+            ),
+            title: Text(contacts[index].name),
+            subtitle: Text(contacts[index].phone),
             trailing: IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () {
@@ -132,8 +203,8 @@ class ContactListView extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => ContactDetailPage(
-                    name: contacts[index],
-                    phone: '010-1234-5678',
+                    name: contacts[index].name,
+                    phone: contacts[index].phone,
                   ),
                 ),
               );
@@ -168,7 +239,9 @@ class ContactDetailPage extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               name,
-              style: Theme.of(context).textTheme.headlineMedium, // 테마의 headlineMedium 스타일
+              style: Theme.of(
+                context,
+              ).textTheme.headlineMedium, // 테마의 headlineMedium 스타일
             ),
             const SizedBox(height: 8),
             Text(
